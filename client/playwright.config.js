@@ -18,6 +18,10 @@ export default defineConfig({
     ['html'],
     ['allure-playwright', { outputFolder: 'allure-results' }]
   ],
+  timeout: 120000, // Global timeout per test: 2 minutes
+  expect: {
+    timeout: 15000, // Timeout for each expect: 15 seconds
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

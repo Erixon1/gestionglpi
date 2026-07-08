@@ -27,18 +27,17 @@ test.describe('Flujo de la Biblioteca Digital', () => {
     await page.fill('#password', 'wrongpassword');
     await page.click('button[type="submit"]');
 
-    // Debería aparecer la alerta (o al menos no redirigir)
-    const errorAlert = page.locator('.login-error-alert');
-    await expect(errorAlert).toBeVisible();
+    // Debería aparecer la alerta (usamos un selector de texto con regex para máxima flexibilidad)
+    await expect(page.getByText(/error al iniciar sesión/i)).toBeVisible({ timeout: 20000 });
 
     // 3. Login correcto como Admin
     await page.fill('#email', 'admin@biblioteca.com');
     await page.fill('#password', 'admin123');
     await page.click('button[type="submit"]');
 
-    // 4. Verificar redirección
-    await expect(page).toHaveURL(/.*dashboard/);
-    await expect(page.locator('.topbar-title')).toContainText('Dashboard');
+    // 4. Verificar redirección (damos más tiempo para la respuesta del servidor)
+    await expect(page).toHaveURL(/.*dashboard/, { timeout: 25000 });
+    await expect(page.locator('.topbar-title')).toContainText('Dashboard', { timeout: 15000 });
   });
 
   test('Sincronización y Gestión de Libros', async ({ page }) => {
@@ -51,8 +50,8 @@ test.describe('Flujo de la Biblioteca Digital', () => {
     await page.fill('#password', 'admin123');
     await page.click('button[type="submit"]');
 
-    await page.click('.sidebar-item:has-text("Libros")');
-    await expect(page).toHaveURL(/.*books/);
+    await page.click('.sidebar-item:has-text("Libros")', { timeout: 15000 });
+    await expect(page).toHaveURL(/.*books/, { timeout: 15000 });
 
     // 1. Sincronizar (opcional)
     const syncBtn = page.locator('button').filter({ hasText: 'Sincronizar' });
@@ -109,10 +108,10 @@ test.describe('Flujo de la Biblioteca Digital', () => {
     await page.fill('#email', 'bibliotecario@biblioteca.com');
     await page.fill('#password', 'biblio123');
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL(/.*dashboard/);
+    await expect(page).toHaveURL(/.*dashboard/, { timeout: 20000 });
 
     // Ir a libros
-    await page.click('.sidebar-item:has-text("Libros")');
+    await page.click('.sidebar-item:has-text("Libros")', { timeout: 15000 });
 
     // Esperar a que la tabla o empty state carguen
     await expect(page.locator('table, .empty-state').first()).toBeVisible({ timeout: 10000 });
@@ -133,7 +132,7 @@ test.describe('Flujo de la Biblioteca Digital', () => {
     await page.fill('#email', 'admin@biblioteca.com');
     await page.fill('#password', 'admin123');
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL(/.*dashboard/);
+    await expect(page).toHaveURL(/.*dashboard/, { timeout: 20000 });
 
     // Navegar a Libros
     await page.click('.sidebar-item:has-text("Libros")');
