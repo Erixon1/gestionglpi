@@ -54,3 +54,25 @@ npm install
 ## Credenciales por defecto
 - **Admin Laravel**: admin@biblioteca.com / admin123
 - **GLPI**: glpi / glpi (usuario por defecto del sistema)
+
+## Imagenes del proyecto
+
+<img width="1917" height="946" alt="image" src="https://github.com/user-attachments/assets/25161a2a-c5ab-4a54-acb3-78f431f7aea7" />
+
+<img width="1901" height="987" alt="image" src="https://github.com/user-attachments/assets/9c465b46-3980-400d-84ce-42fa29bc6213" />
+
+<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/bffd3771-57a7-491c-8543-bb5ff2b94548" />
+
+<img width="1918" height="949" alt="image" src="https://github.com/user-attachments/assets/b9914826-e617-47e3-b3da-bc388e7ef143" />
+
+<img width="1915" height="989" alt="image" src="https://github.com/user-attachments/assets/76d2d41b-bc18-4c4c-beab-898fdebcd84c" />
+
+<img width="1915" height="944" alt="image" src="https://github.com/user-attachments/assets/0cb3ad47-97c9-43cb-90fc-d225260305f2" />
+
+<img width="1918" height="985" alt="image" src="https://github.com/user-attachments/assets/734f3d49-310e-46f8-a357-d78b977491d4" />
+
+<img width="1916" height="948" alt="image" src="https://github.com/user-attachments/assets/98d90ac2-cfc2-4536-97ca-255543899659" />
+
+
+
+
