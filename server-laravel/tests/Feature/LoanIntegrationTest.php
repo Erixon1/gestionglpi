@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Http;
 use Qameta\Allure\Allure;
 use Qameta\Allure\Model\Severity;
 
-uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 beforeEach(function () {
     $this->seed(RolesAndPermissionsSeeder::class);
     $role = Role::where('slug', 'bibliotecario')->first();

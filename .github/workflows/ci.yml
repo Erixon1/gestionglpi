@@ -45,10 +45,6 @@ jobs:
       - name: Ejecutar pruebas automatizadas
         run: |
           cd server-laravel
-          touch database/database.sqlite
-          export DB_CONNECTION=sqlite
-          export DB_DATABASE=$(pwd)/database/database.sqlite
-          php artisan migrate --force
           php artisan test --filter LoanIntegrationTest
 
       # Paso 4: Compilar y empaquetar
