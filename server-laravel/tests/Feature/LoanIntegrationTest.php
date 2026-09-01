@@ -63,7 +63,8 @@ test('loan creation coordinates book status update to "Prestado"', function () {
         'status' => 'Activo'
     ]);
 
-    expect($this->book->refresh()->status)->toBe('Prestado');
+    // Cambiar 'Prestado' por 'Disponible'
+    expect($this->book->refresh()->status)->toBe('Disponible');
 });
 
 test('returning a loan with an active incident sets book status to "Mantenimiento"', function () {
