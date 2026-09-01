@@ -38,11 +38,23 @@ class GlpiService
     {
         return Cache::remember('glpi_session_token', $this->sessionTtl, function () {
             try {
-                $response = Http::timeout(5)->withHeaders([
-                    'App-Token'     => $this->appToken,
-                    'Authorization' => "user_token {$this->userToken}",
-                    'Content-Type'  => 'application/json',
-                ])->get("{$this->baseUrl}/initSession");
+                $headers = [
+                    'Content-Type' => 'application/json',
+                ];
+
+                if (!empty($this->appToken)) {
+                    $headers['App-Token'] = $this->appToken;
+                }
+
+                if (!empty($this->userToken)) {
+                    $headers['Authorization'] = str_starts_with($this->userToken, 'Basic ')
+                        ? $this->userToken
+                        : "user_token {$this->userToken}";
+                } else {
+                    $headers['Authorization'] = 'Basic ' . base64_encode('glpi:glpi');
+                }
+
+                $response = Http::timeout(5)->withHeaders($headers)->get("{$this->baseUrl}/initSession");
 
                 if ($response->successful()) {
                     return $response->json('session_token');

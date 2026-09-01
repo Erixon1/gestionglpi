@@ -73,3 +73,4 @@ allure-results/
 server-laravel/build/allure-results/
 client/allure-results/
 client/test-results/
+scratch/

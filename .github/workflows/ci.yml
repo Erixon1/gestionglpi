@@ -1,0 +1,76 @@
+name: CI Pipeline - ReadOut Biblioteca
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Descargar código del repositorio
+      - name: Descargar el codigo (checkout)
+        uses: actions/checkout@v4
+
+      # Paso 2: Preparar entorno (PHP 8.2 + Node.js 20)
+      - name: Preparar PHP 8.2 y extensiones
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, dom, curl, libxml, zip
+
+      - name: Preparar Node.js 20 y cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Instalar dependencias del Backend
+        run: |
+          cd server-laravel
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Instalar dependencias del Frontend
+        run: |
+          cd client
+          npm install
+
+      # Paso 3: Ejecutar pruebas automatizadas (Pest PHP / Backend)
+      - name: Ejecutar pruebas automatizadas
+        run: |
+          cd server-laravel
+          # Ejecución de pruebas con base de datos SQLite en memoria
+          php artisan test --filter LoanIntegrationTest
+
+      # Paso 4: Compilar y empaquetar
+      - name: Compilar y empaquetar
+        run: |
+          cd client
+          npm run build
+          cd ..
+          mkdir -p build/readout-app
+          cp -r client/dist build/readout-app/public-client
+          cp -r server-laravel build/readout-app/server-api
+          tar -czf readout-biblioteca-v1.0.tar.gz -C build/readout-app .
+
+      # Paso 5: Desplegar (simulado en staging)
+      - name: Desplegar (simulado)
+        run: |
+          mkdir -p staging
+          cp readout-biblioteca-v1.0.tar.gz staging/
+          echo "Despliegue simulado exitoso en carpeta staging/"
+          ls -lh staging/
+
+      # Paso 6: Publicar artefacto generado
+      - name: Publicar artefacto generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: readout-biblioteca-build-artifact
+          path: staging/readout-biblioteca-v1.0.tar.gz
+          retention-days: 7

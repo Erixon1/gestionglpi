@@ -1,5 +1,38 @@
 services:
-  # 1. Backend Laravel (API)
+  # 1. Base de Datos MariaDB (biblioteca + glpi_db con soporte utf8mb4)
+  glpi-db:
+    image: mariadb:10.11
+    container_name: glpi-db
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pass
+      - MYSQL_DATABASE=glpi_db
+      - MARIADB_CHARACTER_SET_SERVER=utf8mb4
+      - MARIADB_COLLATION_SERVER=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  # 2. Sistema GLPI (Gestor de Activos e Inventario)
+  glpi:
+    image: glpi/glpi:latest
+    container_name: glpi-prod
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      - GLPI_DB_HOST=glpi-db
+      - GLPI_DB_NAME=glpi_db
+      - GLPI_DB_USER=root
+      - GLPI_DB_PASSWORD=root_pass
+    depends_on:
+      - glpi-db
+    volumes:
+      - glpi_data_prod:/var/www/html/glpi
+
+  # 3. Backend Laravel (API REST)
   laravel-backend:
     build:
       context: ./server-laravel
@@ -7,73 +40,27 @@ services:
     container_name: laravel-prod
     restart: always
     ports:
-      - "80:80" 
+      - "8000:80"
     env_file:
-      - ./server-laravel/.env 
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-
-  # 2. Sistema GLPI
-  glpi:
-    image: glpi/glpi:latest
-    container_name: glpi-prod
-    restart: always
-    ports:
-      - "8080:80" 
-    environment:
-      # Conexión directa a RDS
-      - GLPI_DB_HOST=tu-instancia-rds.us-east-1.rds.amazonaws.com
-      - GLPI_DB_NAME=glpi_db
-      - GLPI_DB_USER=admin_rds
-      - GLPI_DB_PASSWORD=tu_password_seguro
+      - ./server-laravel/.env
+    depends_on:
+      - glpi-db
+      - glpi
     volumes:
-      # Uso de volumen nombrado para evitar problemas de permisos en Linux/EC2
-      - glpi_data_prod:/var/www/html/glpi
-  
+      - ./server-laravel/storage:/var/www/html/storage
+
+  # 4. Servidor de pruebas de correo (Mailpit)
   mailpit:
-    image: axllent/mailpit
+    image: axllent/mailpit:latest
     container_name: mailpit-prod
     restart: always
-    environment:
-      - MP_UI_AUTH=${MAILPIT_UI_USER}:${MAILPIT_UI_PASS}
-      - MP_DATA_FILE=/data/mailpit.db
+    ports:
+      - "8025:8025"
+      - "1025:1025"
     volumes:
       - mailpit_data:/data
-    deploy:
-      resources:
-        limits:
-          memory: 256M # Límite de seguridad para AWS
 
-  # 4. Automatización con n8n
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: n8n-prod
-    restart: always
-    ports:
-      - "5678:5678"
-    environment:
-      - NODE_ENV=production
-      - N8N_HOST=n8n.elmerdev.com
-      - WEBHOOK_URL=https://n8n.elmerdev.com/
-      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
-    volumes:
-      - n8n_storage_prod:/home/node/.n8n
-      # Eliminé el mapeo .:/data/project:ro porque en prod n8n no necesita ver tu código fuente, 
-      # recibe el CSV de las pruebas por la red vía Webhook.
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: cloudflared-tunnel
-    restart: always
-    command: tunnel run
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-    depends_on:
-      - n8n
-
-# Declaración de volúmenes manejados por Docker
 volumes:
+  mariadb_data:
   glpi_data_prod:
-  n8n_storage_prod:
   mailpit_data:
