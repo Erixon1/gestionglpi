@@ -45,7 +45,7 @@ jobs:
       - name: Ejecutar pruebas automatizadas
         run: |
           cd server-laravel
-          php artisan test --filter LoanIntegrationTest
+          php artisan test
 
       # Paso 4: Compilar y empaquetar
       - name: Compilar y empaquetar
