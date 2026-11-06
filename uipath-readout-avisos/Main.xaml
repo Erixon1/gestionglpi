@@ -1,0 +1,174 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="Main_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Windows.Forms</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <TryCatch DisplayName="Global Try Catch" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <TryCatch.Try>
+      <Sequence DisplayName="Proceso ReadOut" sap2010:WorkflowViewState.IdRef="Sequence_2">
+        <Sequence.Variables>
+          <Variable x:TypeArguments="sd:DataTable" Name="dtConfig" />
+          <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="dicConfig" />
+          <Variable x:TypeArguments="sd:DataTable" Name="dtUsuarios" />
+          <Variable x:TypeArguments="sd:DataTable" Name="dtPrestamos" />
+          <Variable x:TypeArguments="sd:DataTable" Name="dtVencidos" />
+          <Variable x:TypeArguments="sd:DataTable" Name="dtKpis" />
+          <Variable x:TypeArguments="x:Int32" Name="intActivos" />
+          <Variable x:TypeArguments="x:Int32" Name="intNotificados" />
+          <Variable x:TypeArguments="x:String" Name="strResumenHtml" />
+          <Variable x:TypeArguments="x:String" Name="strRutaExcel" />
+        </Sequence.Variables>
+        <ui:LogMessage DisplayName="Log" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Inicio ReadOut Avisos y Auditoría&quot;]" />
+        <ui:ReadRange AddHeaders="True" DataTable="[dtConfig]" DisplayName="Leer rango" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="Config" WorkbookPath="[System.IO.Path.GetFullPath(&quot;Config.xlsx&quot;)]">
+          <ui:ReadRange.Range>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </ui:ReadRange.Range>
+        </ui:ReadRange>
+        <Assign DisplayName="Config a diccionario" sap2010:WorkflowViewState.IdRef="Assign_1">
+          <Assign.To>
+            <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[dicConfig]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[dtConfig.AsEnumerable().Where(Function(r) r(0) IsNot Nothing AndAlso Not IsDBNull(r(0)) AndAlso r(0).ToString().Trim() &lt;&gt; "").ToDictionary(Function(r) r(0).ToString().Trim(), Function(r) If(r(1) Is Nothing OrElse IsDBNull(r(1)), "", r(1).ToString().Trim()))]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar ExtraerDatos.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="ExtraerDatos.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[dicConfig]</InArgument>
+            <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dtUsuarios">[dtUsuarios]</OutArgument>
+            <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dtPrestamos">[dtPrestamos]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar ProcesarMorosos.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="ProcesarMorosos.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dtPrestamos">[dtPrestamos]</InArgument>
+            <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dtUsuarios">[dtUsuarios]</InArgument>
+            <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dtVencidos">[dtVencidos]</OutArgument>
+            <OutArgument x:TypeArguments="x:Int32" x:Key="out_intActivos">[intActivos]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar NotificarLectores.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="NotificarLectores.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[dicConfig]</InArgument>
+            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_dtVencidos">[dtVencidos]</InOutArgument>
+            <OutArgument x:TypeArguments="x:Int32" x:Key="out_intNotificados">[intNotificados]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <If Condition="[dicConfig(&quot;enable_audit_kpis&quot;).Trim().Equals(&quot;true&quot;, StringComparison.OrdinalIgnoreCase)]" DisplayName="KPIs habilitados?" sap2010:WorkflowViewState.IdRef="If_1">
+          <If.Then>
+            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar CalcularAuditoria.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="CalcularAuditoria.xaml">
+              <ui:InvokeWorkflowFile.Arguments>
+                <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dtVencidos">[dtVencidos]</InArgument>
+                <InArgument x:TypeArguments="x:Int32" x:Key="in_intActivos">[intActivos]</InArgument>
+                <InArgument x:TypeArguments="x:Int32" x:Key="in_intNotificados">[intNotificados]</InArgument>
+                <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dtKpis">[dtKpis]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_strResumenHtml">[strResumenHtml]</OutArgument>
+              </ui:InvokeWorkflowFile.Arguments>
+            </ui:InvokeWorkflowFile>
+          </If.Then>
+          <If.Else>
+            <Sequence DisplayName="Sin KPIs" sap2010:WorkflowViewState.IdRef="Sequence_1">
+              <Assign DisplayName="KPIs vacios" sap2010:WorkflowViewState.IdRef="Assign_2">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="sd:DataTable">[dtKpis]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="sd:DataTable">[New System.Data.DataTable("KPIs")]</InArgument>
+                </Assign.Value>
+              </Assign>
+              <Assign DisplayName="Resumen simple" sap2010:WorkflowViewState.IdRef="Assign_3">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[strResumenHtml]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">["&lt;p&gt;Préstamos vencidos: " &amp; dtVencidos.Rows.Count.ToString() &amp; ". Avisos enviados: " &amp; intNotificados.ToString() &amp; ".&lt;/p&gt;"]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </If.Else>
+        </If>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar GenerarReporte.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="GenerarReporte.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="in_dtVencidos">[dtVencidos]</InOutArgument>
+            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="in_dtKpis">[dtKpis]</InOutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_strRutaExcel">[strRutaExcel]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invocar EnviarResumen.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_6" UnSafe="False" WorkflowFileName="EnviarResumen.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[dicConfig]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_strResumenHtml">[strResumenHtml]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_strRutaExcel">[strRutaExcel]</InArgument>
+            <InArgument x:TypeArguments="x:Int32" x:Key="in_intVencidos">[dtVencidos.Rows.Count]</InArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <ui:LogMessage DisplayName="Log" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Fin OK. Vencidos: &quot; &amp; dtVencidos.Rows.Count.ToString() &amp; &quot; | Notificados: &quot; &amp; intNotificados.ToString()]" />
+      </Sequence>
+    </TryCatch.Try>
+    <TryCatch.Catches>
+      <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+        <ActivityAction x:TypeArguments="s:Exception">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Registrar fallo" sap2010:WorkflowViewState.IdRef="Sequence_3">
+            <ui:LogMessage DisplayName="Log" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Error" Message="[&quot;ERROR: &quot; &amp; exception.Message]" />
+            <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim dir As String = System.IO.Path.GetFullPath(&quot;Logs&quot;)&#xA;System.IO.Directory.CreateDirectory(dir)&#xA;Dim sello As String = DateTime.Now.ToString(&quot;yyyyMMdd_HHmmss&quot;)&#xA;System.IO.File.WriteAllText(System.IO.Path.Combine(dir, &quot;error_&quot; &amp; sello &amp; &quot;.txt&quot;), strError)&#xA;Try&#xA;    Dim b As System.Drawing.Rectangle = System.Windows.Forms.Screen.PrimaryScreen.Bounds&#xA;    Using bmp As New System.Drawing.Bitmap(b.Width, b.Height)&#xA;        Using g As System.Drawing.Graphics = System.Drawing.Graphics.FromImage(bmp)&#xA;            g.CopyFromScreen(b.Location, System.Drawing.Point.Empty, b.Size)&#xA;        End Using&#xA;        bmp.Save(System.IO.Path.Combine(dir, &quot;error_&quot; &amp; sello &amp; &quot;.png&quot;), System.Drawing.Imaging.ImageFormat.Png)&#xA;    End Using&#xA;Catch&#xA;End Try" DisplayName="Guardar log y captura de pantalla" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+              <ui:InvokeCode.Arguments>
+                <InArgument x:TypeArguments="x:String" x:Key="strError">[exception.ToString()]</InArgument>
+              </ui:InvokeCode.Arguments>
+            </ui:InvokeCode>
+            <Rethrow DisplayName="Rethrow" sap2010:WorkflowViewState.IdRef="Rethrow_1" />
+          </Sequence>
+        </ActivityAction>
+      </Catch>
+    </TryCatch.Catches>
+  </TryCatch>
+</Activity>

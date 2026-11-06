@@ -1,0 +1,90 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="EnviarCorreo" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Server" Type="InArgument(x:String)" />
+    <x:Property Name="in_Port" Type="InArgument(x:Int32)" />
+    <x:Property Name="in_User" Type="InArgument(x:String)" />
+    <x:Property Name="in_Pass" Type="InArgument(x:String)" />
+    <x:Property Name="in_To" Type="InArgument(x:String)" />
+    <x:Property Name="in_Subject" Type="InArgument(x:String)" />
+    <x:Property Name="in_Body" Type="InArgument(x:String)" />
+    <x:Property Name="in_Adjunto" Type="InArgument(x:String)" />
+    <x:Property Name="in_Ssl" Type="InArgument(x:Boolean)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>EnviarCorreo_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Windows.Forms</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="EnviarCorreo" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="strErr" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="out_Error = &quot;&quot;&#xA;Try&#xA;    If in_Pass Is Nothing OrElse in_Pass.Trim() = &quot;&quot; OrElse in_Pass.ToUpper().StartsWith(&quot;CAMBIAR&quot;) Then&#xA;        Throw New Exception(&quot;smtp_password en Config.xlsx no esta configurada (App Password de Gmail de 16 caracteres).&quot;)&#xA;    End If&#xA;    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12&#xA;    Using msg As New System.Net.Mail.MailMessage()&#xA;        msg.From = New System.Net.Mail.MailAddress(in_User, &quot;Biblioteca ReadOut&quot;)&#xA;        For Each d As String In in_To.Split(New Char() {&quot;;&quot;c, &quot;,&quot;c}, StringSplitOptions.RemoveEmptyEntries)&#xA;            msg.To.Add(d.Trim())&#xA;        Next&#xA;        msg.Subject = in_Subject&#xA;        msg.SubjectEncoding = System.Text.Encoding.UTF8&#xA;        msg.Body = in_Body&#xA;        msg.BodyEncoding = System.Text.Encoding.UTF8&#xA;        msg.IsBodyHtml = True&#xA;        If Not String.IsNullOrWhiteSpace(in_Adjunto) AndAlso System.IO.File.Exists(in_Adjunto) Then&#xA;            msg.Attachments.Add(New System.Net.Mail.Attachment(in_Adjunto))&#xA;        End If&#xA;        Using smtp As New System.Net.Mail.SmtpClient(in_Server, in_Port)&#xA;            smtp.EnableSsl = in_Ssl&#xA;            smtp.Timeout = 30000&#xA;            smtp.Credentials = New System.Net.NetworkCredential(in_User, in_Pass.Replace(&quot; &quot;, &quot;&quot;))&#xA;            smtp.Send(msg)&#xA;        End Using&#xA;    End Using&#xA;Catch ex As Exception&#xA;    Dim e As Exception = ex&#xA;    Dim detalle As String = e.Message&#xA;    While e.InnerException IsNot Nothing&#xA;        e = e.InnerException&#xA;        detalle &amp;= &quot; -&gt; &quot; &amp; e.Message&#xA;    End While&#xA;    out_Error = &quot;SMTP (&quot; &amp; in_Server &amp; &quot;:&quot; &amp; in_Port.ToString() &amp; &quot;, ssl=&quot; &amp; in_Ssl.ToString() &amp; &quot;): &quot; &amp; detalle&#xA;End Try" DisplayName="Enviar correo SMTP (STARTTLS)" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Server">[in_Server]</InArgument>
+        <InArgument x:TypeArguments="x:Int32" x:Key="in_Port">[in_Port]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_User">[in_User]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Pass">[in_Pass]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_To">[in_To]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[in_Subject]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Body">[in_Body]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Adjunto">[in_Adjunto]</InArgument>
+        <InArgument x:TypeArguments="x:Boolean" x:Key="in_Ssl">[in_Ssl]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Error">[strErr]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <If Condition="[Not String.IsNullOrEmpty(strErr)]" DisplayName="Fallo SMTP?" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Throw DisplayName="Throw" Exception="[New System.Exception(strErr)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>

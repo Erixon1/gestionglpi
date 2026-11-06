@@ -1,0 +1,14 @@
+Output/*
+Logs/*
+!Output/.gitkeep
+!Logs/.gitkeep
+.local/
+.objects/
+.screenshots/
+.settings/
+.entities/
+.project/
+.templates/
+.tmh/
+Pruebas/correos/
+Pruebas/__pycache__/

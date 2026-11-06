@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Aviso de préstamo vencido</title></head>
+<body style="margin:0;background:#f3f4f6;font-family:'Segoe UI',Arial,sans-serif;color:#1f2937">
+  <div style="max-width:560px;margin:24px auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb">
+    <div style="background:#1d4ed8;color:#ffffff;padding:18px 24px"><h2 style="margin:0">Aviso de préstamo vencido</h2></div>
+    <div style="padding:24px;line-height:1.5">
+      <p>Hola <b>{Nombre}</b>,</p>
+      <p>Te recordamos que el siguiente préstamo de la Biblioteca superó su fecha de devolución:</p>
+      <table style="border-collapse:collapse;width:100%">
+        <tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280">Libro</td><td style="padding:8px;border-bottom:1px solid #e5e7eb"><b>{Libro}</b></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280">Fecha de devolución</td><td style="padding:8px;border-bottom:1px solid #e5e7eb">{FechaDevolucion}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;color:#6b7280">Días de atraso</td><td style="padding:8px;border-bottom:1px solid #e5e7eb"><b>{DiasAtraso}</b> ({Criticidad})</td></tr>
+      </table>
+      <p>El plazo estándar de préstamo es de <b>7 días</b>. Por favor devuelve el libro a la brevedad en el mostrador de la Biblioteca para que otros lectores puedan usarlo.</p>
+      <p style="color:#6b7280;font-size:13px">Este es un mensaje automático del sistema ReadOut. Si ya devolviste el libro, ignora este aviso.</p>
+    </div>
+  </div>
+</body></html>

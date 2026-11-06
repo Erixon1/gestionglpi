@@ -1,0 +1,6 @@
+{
+  "Name": "ReadOutAvisosAuditoria",
+  "ProjectType": "Process",
+  "Description": "Bot RPA: alerta de prestamos vencidos, aviso a lectores y auditoria ejecutiva (ReadOut).",
+  "MainFile": "Main.xaml"
+}

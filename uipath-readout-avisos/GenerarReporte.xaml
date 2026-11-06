@@ -1,0 +1,73 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="GenerarReporte" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_dtVencidos" Type="InOutArgument(sd:DataTable)" />
+    <x:Property Name="in_dtKpis" Type="InOutArgument(sd:DataTable)" />
+    <x:Property Name="out_strRutaExcel" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>GenerarReporte_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.IO.Compression</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Windows.Forms</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.IO.Compression</AssemblyReference>
+      <AssemblyReference>System.IO.Compression.ZipFile</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="GenerarReporte" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim dirOut As String = System.IO.Path.GetFullPath(&quot;Output&quot;)&#xA;System.IO.Directory.CreateDirectory(dirOut)&#xA;outRuta = System.IO.Path.Combine(dirOut, &quot;avisos_vencidos_&quot; &amp; DateTime.Now.ToString(&quot;yyyy-MM-dd&quot;) &amp; &quot;.xlsx&quot;)&#xA;Dim plantilla As String = System.IO.Path.GetFullPath(&quot;Data\Plantilla_Auditoria.xlsx&quot;)&#xA;If System.IO.File.Exists(plantilla) Then System.IO.File.Copy(plantilla, outRuta, True)&#xA;&#xA;Dim tMorosos As New System.Data.DataTable(&quot;Detalle Morosos&quot;)&#xA;tMorosos.Columns.Add(&quot;ID&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;Libro&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;Usuario&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;Email&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;F. Devolución&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;Días Atraso&quot;, GetType(Integer))&#xA;tMorosos.Columns.Add(&quot;Criticidad&quot;, GetType(String))&#xA;tMorosos.Columns.Add(&quot;Estado Notificación&quot;, GetType(String))&#xA;&#xA;If dtV IsNot Nothing Then&#xA;    For Each r As System.Data.DataRow In dtV.Rows&#xA;        Dim id As String = If(r.IsNull(&quot;ID&quot;) OrElse r(&quot;ID&quot;) Is Nothing, &quot;&quot;, r(&quot;ID&quot;).ToString())&#xA;        Dim libro As String = If(r.IsNull(&quot;Libro&quot;) OrElse r(&quot;Libro&quot;) Is Nothing, &quot;&quot;, r(&quot;Libro&quot;).ToString())&#xA;        Dim user As String = If(r.IsNull(&quot;Usuario&quot;) OrElse r(&quot;Usuario&quot;) Is Nothing, &quot;&quot;, r(&quot;Usuario&quot;).ToString())&#xA;        Dim mail As String = If(r.IsNull(&quot;Email&quot;) OrElse r(&quot;Email&quot;) Is Nothing, &quot;&quot;, r(&quot;Email&quot;).ToString())&#xA;        Dim fdev As String = If(r.IsNull(&quot;F. Devolución&quot;) OrElse r(&quot;F. Devolución&quot;) Is Nothing, &quot;&quot;, r(&quot;F. Devolución&quot;).ToString())&#xA;        Dim dias As Integer = 0&#xA;        If Not r.IsNull(&quot;Días Atraso&quot;) AndAlso r(&quot;Días Atraso&quot;) IsNot Nothing Then&#xA;            Integer.TryParse(r(&quot;Días Atraso&quot;).ToString(), dias)&#xA;        End If&#xA;        Dim crit As String = If(r.IsNull(&quot;Criticidad&quot;) OrElse r(&quot;Criticidad&quot;) Is Nothing, &quot;&quot;, r(&quot;Criticidad&quot;).ToString())&#xA;        Dim notif As String = If(r.IsNull(&quot;Estado Notificación&quot;) OrElse r(&quot;Estado Notificación&quot;) Is Nothing, &quot;&quot;, r(&quot;Estado Notificación&quot;).ToString())&#xA;        tMorosos.Rows.Add(id, libro, user, mail, fdev, dias, crit, notif)&#xA;    Next&#xA;End If&#xA;dtV = tMorosos&#xA;&#xA;Dim tKpis As New System.Data.DataTable(&quot;Auditoria y KPIs&quot;)&#xA;tKpis.Columns.Add(&quot;Indicador&quot;, GetType(String))&#xA;tKpis.Columns.Add(&quot;Valor&quot;, GetType(String))&#xA;tKpis.Columns.Add(&quot;Detalle&quot;, GetType(String))&#xA;&#xA;If dtK IsNot Nothing Then&#xA;    For Each r As System.Data.DataRow In dtK.Rows&#xA;        Dim ind As String = If(r.IsNull(0) OrElse r(0) Is Nothing, &quot;&quot;, r(0).ToString())&#xA;        Dim val As String = If(r.IsNull(1) OrElse r(1) Is Nothing, &quot;&quot;, r(1).ToString())&#xA;        Dim det As String = If(r.Table.Columns.Count &gt; 2 AndAlso (Not r.IsNull(2)) AndAlso r(2) IsNot Nothing, r(2).ToString(), &quot;&quot;)&#xA;        tKpis.Rows.Add(ind, val, det)&#xA;    Next&#xA;End If&#xA;dtK = tKpis&#xA;&#xA;If Not System.IO.File.Exists(outRuta) Then Throw New System.Exception(&quot;No se encontro la plantilla: &quot; &amp; plantilla)&#xA;Dim esc As Func(Of String, String) = Function(txt) System.Security.SecurityElement.Escape(txt)&#xA;Dim build As Func(Of System.Data.DataTable, Integer, String) = Function(tabla, numCols)&#xA;    Dim sb As New System.Text.StringBuilder()&#xA;    Dim rn As Integer = 2&#xA;    For Each rw As System.Data.DataRow In tabla.Rows&#xA;        sb.Append(&quot;&lt;row r=&quot;&quot;&quot; &amp; rn.ToString() &amp; &quot;&quot;&quot;&gt;&quot;)&#xA;        For colIdx As Integer = 0 To numCols - 1&#xA;            Dim refc As String = Chr(65 + colIdx) &amp; rn.ToString()&#xA;            Dim v As String = If(rw.IsNull(colIdx), &quot;&quot;, rw(colIdx).ToString())&#xA;            If tabla.Columns(colIdx).DataType Is GetType(Integer) Then&#xA;                sb.Append(&quot;&lt;c r=&quot;&quot;&quot; &amp; refc &amp; &quot;&quot;&quot;&gt;&lt;v&gt;&quot; &amp; v &amp; &quot;&lt;/v&gt;&lt;/c&gt;&quot;)&#xA;            Else&#xA;                sb.Append(&quot;&lt;c r=&quot;&quot;&quot; &amp; refc &amp; &quot;&quot;&quot; t=&quot;&quot;inlineStr&quot;&quot;&gt;&lt;is&gt;&lt;t xml:space=&quot;&quot;preserve&quot;&quot;&gt;&quot; &amp; esc(v) &amp; &quot;&lt;/t&gt;&lt;/is&gt;&lt;/c&gt;&quot;)&#xA;            End If&#xA;        Next&#xA;        sb.Append(&quot;&lt;/row&gt;&quot;)&#xA;        rn += 1&#xA;    Next&#xA;    Return sb.ToString()&#xA;End Function&#xA;&#xA;Dim hojas() As String = {&quot;xl/worksheets/sheet1.xml&quot;, &quot;xl/worksheets/sheet2.xml&quot;}&#xA;Dim tablas() As System.Data.DataTable = {tMorosos, tKpis}&#xA;Dim anchoCols() As Integer = {8, 3}&#xA;Using zf As System.IO.Compression.ZipArchive = System.IO.Compression.ZipFile.Open(outRuta, System.IO.Compression.ZipArchiveMode.Update)&#xA;    For i As Integer = 0 To 1&#xA;        Dim ent As System.IO.Compression.ZipArchiveEntry = zf.GetEntry(hojas(i))&#xA;        Dim xml As String&#xA;        Using sr As New System.IO.StreamReader(ent.Open(), System.Text.Encoding.UTF8)&#xA;            xml = sr.ReadToEnd()&#xA;        End Using&#xA;        ent.Delete()&#xA;        xml = xml.Replace(&quot;&lt;/sheetData&gt;&quot;, build(tablas(i), anchoCols(i)) &amp;  &quot;&lt;/sheetData&gt;&quot;)&#xA;        xml = System.Text.RegularExpressions.Regex.Replace(xml, &quot;&lt;dimension ref=&quot;&quot;[^&quot;&quot;]*&quot;&quot;\s*/&gt;&quot;, &quot;&lt;dimension ref=&quot;&quot;A1:&quot; &amp; Chr(64 + anchoCols(i)) &amp; (tablas(i).Rows.Count + 1).ToString() &amp; &quot;&quot;&quot;/&gt;&quot;)&#xA;        Dim ne As System.IO.Compression.ZipArchiveEntry = zf.CreateEntry(hojas(i))&#xA;        Using sw As New System.IO.StreamWriter(ne.Open(), New System.Text.UTF8Encoding(False))&#xA;            sw.Write(xml)&#xA;        End Using&#xA;    Next&#xA;End Using" DisplayName="Preparar archivo y asegurar tipos limpios" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+      <ui:InvokeCode.Arguments>
+        <OutArgument x:TypeArguments="x:String" x:Key="outRuta">[out_strRutaExcel]</OutArgument>
+        <InOutArgument x:TypeArguments="sd:DataTable" x:Key="dtV">[in_dtVencidos]</InOutArgument>
+        <InOutArgument x:TypeArguments="sd:DataTable" x:Key="dtK">[in_dtKpis]</InOutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:LogMessage DisplayName="Log" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Reporte generado: &quot; &amp; out_strRutaExcel]" />
+  </Sequence>
+</Activity>
